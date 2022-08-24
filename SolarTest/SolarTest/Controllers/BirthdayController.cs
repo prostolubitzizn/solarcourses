@@ -35,6 +35,14 @@ namespace SolarTest.Controllers
         }
 
         [HttpGet]
+        [Route("soonBirthday")]
+        public IEnumerable<Birthday> GetSoonBirthdays()
+        {
+            var birthdays = _birthdayRepository.GetBirthdays();
+            return birthdays.Where(bd => bd.BirthDate.Date > DateTime.Today.Date && bd.BirthDate.Date <= DateTime.Today.Date.AddDays(3));
+        }
+
+        [HttpGet]
         [Route("getBirthday/{id}")]
         public Birthday GetUser(int id)
         {
