@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using SolarTest.Models;
 
 namespace SolarTest
 {
@@ -26,6 +27,9 @@ namespace SolarTest
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string connectionString =
+                "Server=127.0.0.1;Port=5432;Database=Birthday;User Id=postgres;Password=1234;";
+            services.AddTransient<IBirthdayRepository, BirthdayRepository>(provider => new BirthdayRepository(connectionString));
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "SolarTest", Version = "v1"}); });
         }
@@ -40,11 +44,11 @@ namespace SolarTest
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SolarTest v1"));
             }
 
-            app.UseHttpsRedirection();
+           // app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+          //  app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

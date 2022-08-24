@@ -11,28 +11,34 @@ namespace SolarTest.Controllers
     [Route("[controller]")]
     public class BirthdayController : ControllerBase
     {
+
+        private readonly IBirthdayRepository _birthdayRepository;
+
+        public BirthdayController(IBirthdayRepository birthdayRepository)
+        {
+            _birthdayRepository = birthdayRepository;
+        }
+
         [HttpGet]
         public IEnumerable<Birthday> Get()
         {
             return new List<Birthday>()
             {
-                new Birthday
-                {
-                    BirthDate = new DateTime(2022,08,18),
-                    FullName = "Natasha V.A.",
-                    PhotoUrl = "http://vk.com/huisoi",
-                    IsSoon = false,
-                    IsOutDated = true,
-                },
-                new Birthday
-                {
-                    BirthDate = DateTime.Now,
-                    FullName = "Kirill Sukhkasf'db s",
-                    PhotoUrl = "http://1488228.com/hui.png",
-                    IsSoon = true,
-                    IsOutDated = false,
-                }
             };
+        }
+
+        [HttpGet]
+        [Route("getBirthday/{id}")]
+        public Birthday GetUser(int id)
+        {
+            return _birthdayRepository.Get(id);
+        }
+
+        [HttpPost]
+        [Route("insertBirthday")]
+        public int? Insert(Birthday birthday)
+        {
+            return _birthdayRepository.Create(birthday);
         }
     }
 }
