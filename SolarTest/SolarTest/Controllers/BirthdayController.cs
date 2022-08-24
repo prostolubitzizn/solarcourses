@@ -19,12 +19,11 @@ namespace SolarTest.Controllers
             _birthdayRepository = birthdayRepository;
         }
 
-        [HttpGet]
-        public IEnumerable<Birthday> Get()
+        [HttpGet] 
+        [Route("allBirthdays")]
+        public IEnumerable<Birthday> GetAll()
         {
-            return new List<Birthday>()
-            {
-            };
+            return _birthdayRepository.GetBirthdays();
         }
 
         [HttpGet]
