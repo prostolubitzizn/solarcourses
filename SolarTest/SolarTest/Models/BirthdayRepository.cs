@@ -55,7 +55,7 @@ namespace SolarTest.Models
         {
             using (IDbConnection db = new NpgsqlConnection(connectionString))
             {
-                var sqlQuery = "UPDATE \"Users\" SET Name = @Name, Age = @Age WHERE \"Id\" = @Id";
+                var sqlQuery = "UPDATE \"Birthdays\" SET \"BirthDate\" = @BirthDate, \"PhotoUrl\" = @PhotoUrl,\"FullName\" = @FullName  WHERE \"Id\" = @Id";
                 db.Execute(sqlQuery, user);
             }
         }
@@ -64,7 +64,7 @@ namespace SolarTest.Models
         {
             using (IDbConnection db = new NpgsqlConnection(connectionString))
             {
-                var sqlQuery = "DELETE FROM \"Users\" WHERE \"Id\" = @id";
+                var sqlQuery = "DELETE FROM \"Birthdays\" WHERE \"Id\" = @id";
                 db.Execute(sqlQuery, new { id });
             }
         }

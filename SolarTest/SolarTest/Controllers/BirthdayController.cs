@@ -34,11 +34,27 @@ namespace SolarTest.Controllers
             return _birthdayRepository.Get(id);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("insertBirthday")]
         public int? Insert(Birthday birthday)
         {
             return _birthdayRepository.Create(birthday);
+        }
+
+        [HttpPut]
+        [Route("updateBirthday")]
+        public bool Update(Birthday birthday)
+        {
+            _birthdayRepository.Update(birthday);
+            return true;
+        }
+
+        [HttpDelete]
+        [Route("deleteBirthday")]
+        public bool Delete(int id)
+        {
+            _birthdayRepository.Delete(id);
+            return true;
         }
     }
 }
