@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using SolarTest.Models;
+using SolarTest.Services;
 
 namespace SolarTest.Controllers
 {
@@ -12,55 +13,61 @@ namespace SolarTest.Controllers
     public class BirthdayController : ControllerBase
     {
 
-        private readonly IBirthdayRepository _birthdayRepository;
+        private readonly IBirthdayService _birthdayService;
 
-        public BirthdayController(IBirthdayRepository birthdayRepository)
+        public BirthdayController(IBirthdayService birthdayService)
         {
-            _birthdayRepository = birthdayRepository;
+            _birthdayService = birthdayService;
         }
 
         [HttpGet] 
         [Route("allBirthdays")]
         public IEnumerable<Birthday> GetAll()
         {
-            return _birthdayRepository.GetBirthdays();
+            return _birthdayService.GetBirthdays();
         }
 
         [HttpGet]
         [Route("todayBirthday")]
         public IEnumerable<Birthday> GetTodayBirthdays()
         {
-            var birthdays = _birthdayRepository.GetBirthdays();
-            return birthdays.Where(bd => bd.BirthDate.Date == DateTime.Today.Date);
+            return _birthdayService.GetTodaysBirthdays();
         }
 
         [HttpGet]
         [Route("soonBirthday")]
         public IEnumerable<Birthday> GetSoonBirthdays()
         {
-            var birthdays = _birthdayRepository.GetBirthdays();
-            return birthdays.Where(bd => bd.BirthDate.Date > DateTime.Today.Date && bd.BirthDate.Date <= DateTime.Today.Date.AddDays(3));
+            return _birthdayService.GetSoonBirthdays();
         }
+
+        [HttpGet]
+        [Route("outdatedBirthday")]
+        public IEnumerable<Birthday> GetOutdatedBirthdays()
+        {
+            return _birthdayService.GetOutDatedBirthdays();
+        }
+        
 
         [HttpGet]
         [Route("getBirthday/{id}")]
         public Birthday GetUser(int id)
         {
-            return _birthdayRepository.Get(id);
+            return _birthdayService.Get(id);
         }
 
         [HttpPut]
         [Route("insertBirthday")]
         public int? Insert(Birthday birthday)
         {
-            return _birthdayRepository.Create(birthday);
+            return _birthdayService.Create(birthday);
         }
 
         [HttpPut]
         [Route("updateBirthday")]
         public bool Update(Birthday birthday)
         {
-            _birthdayRepository.Update(birthday);
+            _birthdayService.Update(birthday);
             return true;
         }
 
@@ -68,7 +75,7 @@ namespace SolarTest.Controllers
         [Route("deleteBirthday")]
         public bool Delete(int id)
         {
-            _birthdayRepository.Delete(id);
+            _birthdayService.Delete(id);
             return true;
         }
     }

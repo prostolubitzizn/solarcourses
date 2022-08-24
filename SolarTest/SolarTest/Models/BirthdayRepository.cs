@@ -12,7 +12,7 @@ namespace SolarTest.Models
         void Delete(int id);
         Birthday Get(int id);
         List<Birthday> GetBirthdays();
-        void Update(Birthday user);
+        void Update(Birthday birthday);
     }
 
     public class BirthdayRepository : IBirthdayRepository
@@ -51,12 +51,12 @@ namespace SolarTest.Models
             }
         }
 
-        public void Update(Birthday user)
+        public void Update(Birthday birthday)
         {
             using (IDbConnection db = new NpgsqlConnection(connectionString))
             {
                 var sqlQuery = "UPDATE \"Birthdays\" SET \"BirthDate\" = @BirthDate, \"PhotoUrl\" = @PhotoUrl,\"FullName\" = @FullName  WHERE \"Id\" = @Id";
-                db.Execute(sqlQuery, user);
+                db.Execute(sqlQuery, birthday);
             }
         }
 

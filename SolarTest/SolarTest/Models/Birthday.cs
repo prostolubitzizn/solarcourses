@@ -8,6 +8,7 @@ namespace SolarTest.Models
         public string FullName { get; set; }
         public DateTime BirthDate { get; set; }
         public string PhotoUrl { get; set; }
+        public int Order { get; set; }
         
         // /// <summary>
         // /// Birthday is soon <= 3 days.

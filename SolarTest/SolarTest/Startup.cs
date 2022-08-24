@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SolarTest.Models;
+using SolarTest.Services;
 
 namespace SolarTest
 {
@@ -30,6 +31,7 @@ namespace SolarTest
             string connectionString =
                 "Server=127.0.0.1;Port=5432;Database=Birthday;User Id=postgres;Password=1234;";
             services.AddTransient<IBirthdayRepository, BirthdayRepository>(provider => new BirthdayRepository(connectionString));
+            services.AddTransient<IBirthdayService, BirthdayService>();
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "SolarTest", Version = "v1"}); });
         }
