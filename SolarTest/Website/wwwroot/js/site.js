@@ -117,6 +117,7 @@ function addRow(id, name, birthDate, photo) {
     row.insertCell(2).innerHTML= name;
     row.insertCell(3).innerHTML= birthDate;
     row.insertCell(4).innerHTML= photo;
+    row.insertCell(5).innerHTML= '<form name="uploader" enctype="multipart/form-data" method="POST"> Отправить этот файл: <input name="userfile" type="file" /> <button type="submit" name="submit">Загрузить</button> </form>';
 }
 
 function deleteRow(obj) {
