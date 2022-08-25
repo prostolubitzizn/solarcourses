@@ -2,12 +2,12 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
-
+const host = "https://localhost:5002";
 refresh();
 
 function refresh() {
     deleteAllRows();
-    $.get("https://localhost:5002/Birthday/allBirthdays", function (data) {
+    $.get(host + "/Birthday/allBirthdays", function (data) {
         for (let i = 0; i < data.length; i++) {
             addRow(data[i].id, data[i].fullName, data[i].birthDateString, data[i].photoUrl);
         }
@@ -33,7 +33,7 @@ function addBirthday(){
         data.id = id.value;
         $.ajax(
             {
-                url: "https://localhost:5002/Birthday/updateBirthday",
+                url: host + "/Birthday/updateBirthday",
                 type: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify(data)
@@ -45,7 +45,7 @@ function addBirthday(){
     else{
         $.ajax(
             {
-                url: "https://localhost:5002/Birthday/insertBirthday",
+                url: host + "/Birthday/insertBirthday",
                 type: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify(data)
@@ -71,7 +71,7 @@ function deleteBirthday(id){
 
 function getSoonBirthdays(){
     deleteAllRows();
-    $.get("https://localhost:5002/Birthday/soonBirthday", function (data) {
+    $.get(host + "/Birthday/soonBirthday", function (data) {
         for (let i = 0; i < data.length; i++) {
             addRow(data[i].id, data[i].fullName, data[i].birthDateString, data[i].photoUrl);
         }
@@ -80,7 +80,7 @@ function getSoonBirthdays(){
 
 function getTodayBirthdays(){
     deleteAllRows();
-    $.get("https://localhost:5002/Birthday/todayBirthday", function (data) {
+    $.get(host + "/Birthday/todayBirthday", function (data) {
         for (let i = 0; i < data.length; i++) {
             addRow(data[i].id, data[i].fullName, data[i].birthDateString, data[i].photoUrl);
         }
@@ -89,7 +89,7 @@ function getTodayBirthdays(){
 
 function getOutDatedBirthdays(){
     deleteAllRows();
-    $.get("https://localhost:5002/Birthday/outdatedBirthday", function (data) {
+    $.get(host + "/Birthday/outdatedBirthday", function (data) {
         for (let i = 0; i < data.length; i++) {
             addRow(data[i].id, data[i].fullName, data[i].birthDateString, data[i].photoUrl);
         }
@@ -117,7 +117,7 @@ function addRow(id, name, birthDate, photo) {
     row.insertCell(2).innerHTML= name;
     row.insertCell(3).innerHTML= birthDate;
     row.insertCell(4).innerHTML= photo;
-    row.insertCell(5).innerHTML= '<form name="uploader" enctype="multipart/form-data" method="POST"> Отправить этот файл: <input name="userfile" type="file" /> <button type="submit" name="submit">Загрузить</button> </form>';
+    row.insertCell(5).innerHTML=  '<input id="fileupload-'+ id + '" type="file" name="fileupload" accept="image/png, image/jpeg"/><button id="upload-button" onclick="uploadFile(' + id + ')"> Загрузить </button>'
 }
 
 function deleteRow(obj) {
@@ -150,8 +150,39 @@ function addTable() {
 
 }
 
-function load() {
 
-    console.log("Page load finished");
+function uploadFile(id) {
+    let formData = new FormData();
+    const fileUploaderId = "#fileupload-" +id;
+    
+    const myFiles = $(fileUploaderId).prop('files')
 
+    var form_data = new FormData();
+    const newFileName = "id-"+ id + '-' + myFiles[0].name;
+    
+    console.log('newFileName', newFileName);
+    
+    form_data.append('file', myFiles[0], newFileName);
+    
+    
+    console.log("FormData", form_data);
+    
+    $.ajax({
+        url: host + "/Birthday/uploadImage",
+        type: "POST",
+        data: form_data,
+        async: false,
+        success: function (msg) {
+            alert(msg);
+        },
+        error: function(msg) {
+            alert('Ошибка!');
+        },
+        dataType: 'text',
+        cache: false,
+        contentType: false,
+        processData: false,
+    });
+    alert('The file has been uploaded successfully.');
 }
+

@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.IO;
 using Common.Models;
 using Common.Services;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Website.Controllers
@@ -11,10 +14,12 @@ namespace Website.Controllers
     {
 
         private readonly IBirthdayService _birthdayService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public BirthdayController(IBirthdayService birthdayService)
+        public BirthdayController(IBirthdayService birthdayService, IWebHostEnvironment webHostEnvironment)
         {
             _birthdayService = birthdayService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet] 
@@ -74,6 +79,24 @@ namespace Website.Controllers
         {
             _birthdayService.Delete(id);
             return true;
+        }
+        
+        [HttpPost]
+        [Route("uploadImage")]
+        public IActionResult Image(IFormFile file)
+        {
+
+            if (file == null)
+            {
+                return BadRequest();
+            }
+
+            string dirPath = Path.Combine(_webHostEnvironment.ContentRootPath, "UploadFiles");
+
+            string filePath = Path.Combine(dirPath, file.FileName);
+            //process the form data
+		
+            return Ok("good");
         }
     }
 }

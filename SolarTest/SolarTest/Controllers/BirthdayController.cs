@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Common.Models;
 using Common.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SolarTest.Controllers
@@ -74,6 +75,15 @@ namespace SolarTest.Controllers
         {
             _birthdayService.Delete(id);
             return true;
+        }
+        
+        [HttpPost]
+        [Route("uploadImage")]
+        public IActionResult Image(IFormFile file)
+        {
+            //process the form data
+		
+            return Ok("good");
         }
     }
 }
