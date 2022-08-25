@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Models;
 using Common.Services;
+using Microsoft.IdentityModel.Tokens;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -18,7 +20,8 @@ namespace NotificationWorker
         private static TelegramBotClient _botClient;
         private static IChatService _chatService;
         private static IBirthdayService _birthdayService;
-        private static int timeOutInMs = 10000;
+        private static int timeOutInMs = 3000;
+        private static string botToken = "5799312299:AAHsTeAwI7OS_8nNvv-osgstqQJjik7WPxA";
         static async Task Main(string[] args)
         {
             _birthdayService = new BirthdayService(new BirthdayRepository(Common.Configuration.ConnectionString));
@@ -38,18 +41,32 @@ namespace NotificationWorker
                 return _botClient;
             }
             
-            string token = "5799312299:AAHsTeAwI7OS_8nNvv-osgstqQJjik7WPxA";
-            _botClient = new TelegramBotClient(token);
+            _botClient = new TelegramBotClient(botToken);
 
             return _botClient;
         }
 
         private static async Task Bot()
         {
+            var cts = new CancellationTokenSource();
+            
+            var botClient = BotInit(cts);
+            
+            var me = await botClient.GetMeAsync(cancellationToken: cts.Token);
+
+            Console.WriteLine($"Start listening for @{me.Username}");
+            
+            await NotifySubscribedClientsInCycle(botClient, cts.Token);
+           
+            Console.ReadLine();
+
+            // Send cancellation request to stop bot
+            cts.Cancel();
+        }
+
+        private static ITelegramBotClient BotInit(CancellationTokenSource cts)
+        {
             var botClient = GetBotInstance();
-            
-            using var cts = new CancellationTokenSource();
-            
             var receiverOptions = new ReceiverOptions
             {
                 AllowedUpdates = Array.Empty<UpdateType>() 
@@ -62,31 +79,23 @@ namespace NotificationWorker
                 cancellationToken: cts.Token
             );
 
-            
-            var me = await botClient.GetMeAsync();
-
-            Console.WriteLine($"Start listening for @{me.Username}");
-            
-            await NotifySubscribedClientsWithSoonBirthdays(botClient, cts.Token);
-           
-            Console.ReadLine();
-
-            // Send cancellation request to stop bot
-            cts.Cancel();
+            return botClient;
         }
 
 
-        private static async Task NotifySubscribedClientsWithSoonBirthdays(ITelegramBotClient botClient, CancellationToken token)
+        private static async Task NotifySubscribedClientsInCycle(ITelegramBotClient botClient, CancellationToken token)
         {
             while (true)
             {
                 var birthdaySoonMessage = BirthdaySoonMessage();
+                var todayBirthdayMessage = BirthdayTodayMessage();
             
                 var chats = _chatService.GetAll();
 
                 foreach (var chat in chats)
                 {
                     await Notify(botClient, token, chat.ChatId, birthdaySoonMessage);
+                    await Notify(botClient, token, chat.ChatId, todayBirthdayMessage);
                 }
 
                 Thread.Sleep(timeOutInMs);
@@ -103,16 +112,20 @@ namespace NotificationWorker
             if (message.Text is not { } messageText)
                 return;
 
-            if (messageText == "/start")
+            await Subscribe(botClient, cancellationToken, message);
+        }
+
+        private static async Task Subscribe(ITelegramBotClient botClient,CancellationToken cancellationToken, Message message)
+        {
+            if (message.Text != "/start")
             {
-                var chatId = message.Chat.Id;
-
-                Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-            
-                SaveChatIfNotExist(chatId);
-
-                await Notify(botClient, cancellationToken, chatId, "Subscription is succesfull. Wait for an updates");
+                return;
             }
+            
+            var chatId = message.Chat.Id;
+            Console.WriteLine($"Received a '{message.Text}' message in chat {chatId}.");
+            SaveChatIfNotExist(chatId);
+            await Notify(botClient, cancellationToken, chatId, "Subscription is successful. Wait for an updates");
         }
         
         private static async Task Notify(ITelegramBotClient botClient, CancellationToken cancellationToken, long chatId, string message)
@@ -126,11 +139,27 @@ namespace NotificationWorker
 
         private static string BirthdaySoonMessage()
         {
-            var birthdaysSoon = _birthdayService.GetSoonBirthdays();
+            return Message("Birthday soon:", _birthdayService.GetSoonBirthdays());
+        }
 
-            var bdMessage = birthdaysSoon.Select(x => " | " + x.FullName + " | " + x.BirthDate.Date + " | ");
+        private static string BirthdayTodayMessage()
+        {
+            return Message("Birthday today:", _birthdayService.GetTodaysBirthdays());
+        }
+
+        private static string Message(string template, IEnumerable<Birthday> birthdays)
+        {
+            var bdMessage = birthdays.Select(x => " | " + x.FullName + " | " + x.BirthDate.Date + " | ");
+            
+            
             var message = string.Join(System.Environment.NewLine, bdMessage);
-            return $"Birthday soon: {message}";
+            
+            if (message.IsNullOrEmpty())
+            {
+                message = "Nobody";
+            }
+            
+            return template + " " + message;
         }
 
 
