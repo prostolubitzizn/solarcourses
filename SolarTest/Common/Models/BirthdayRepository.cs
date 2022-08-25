@@ -4,7 +4,7 @@ using System.Linq;
 using Dapper;
 using Npgsql;
 
-namespace SolarTest.Models
+namespace Common.Models
 {
     public interface IBirthdayRepository
     {

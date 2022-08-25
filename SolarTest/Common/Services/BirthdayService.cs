@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SolarTest.Models;
+using Common.Models;
 
-namespace SolarTest.Services
+namespace Common.Services
 {
     public class BirthdayService : IBirthdayService
     {

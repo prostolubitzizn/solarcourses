@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using Common.Models;
+using Common.Services;
 using Microsoft.AspNetCore.Mvc;
-using SolarTest.Models;
-using SolarTest.Services;
 
 namespace SolarTest.Controllers
 {

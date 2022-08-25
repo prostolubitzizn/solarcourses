@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using SolarTest.Models;
+using Common.Models;
 
-namespace SolarTest.Services
+namespace Common.Services
 {
     public interface IBirthdayService
     {

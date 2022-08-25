@@ -1,6 +1,6 @@
 using System;
 
-namespace SolarTest.Models
+namespace Common.Models
 {
     public class Birthday
     {
