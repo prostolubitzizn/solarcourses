@@ -116,7 +116,7 @@ function addRow(id, name, birthDate, photo) {
     row.insertCell(1).innerHTML= '<div id =' + id + '>' + id + '</div>';
     row.insertCell(2).innerHTML= name;
     row.insertCell(3).innerHTML= birthDate;
-    row.insertCell(4).innerHTML= photo;
+    row.insertCell(4).innerHTML= '<img src=' + photo + ' style="width:300px;height:300px;"> + </img>';
     row.insertCell(5).innerHTML=  '<input id="fileupload-'+ id + '" type="file" name="fileupload" accept="image/png, image/jpeg"/><button id="upload-button" onclick="uploadFile(' + id + ')"> Загрузить </button>'
 }
 
@@ -160,12 +160,7 @@ function uploadFile(id) {
     var form_data = new FormData();
     const newFileName = "id-"+ id + '-' + myFiles[0].name;
     
-    console.log('newFileName', newFileName);
-    
     form_data.append('file', myFiles[0], newFileName);
-    
-    
-    console.log("FormData", form_data);
     
     $.ajax({
         url: host + "/Birthday/uploadImage",
@@ -173,16 +168,16 @@ function uploadFile(id) {
         data: form_data,
         async: false,
         success: function (msg) {
-            alert(msg);
+            console.log(msg);
         },
         error: function(msg) {
-            alert('Ошибка!');
+            console.log('Ошибка!');
         },
         dataType: 'text',
         cache: false,
         contentType: false,
         processData: false,
-    });
-    alert('The file has been uploaded successfully.');
+    })
+        .then(() => refresh());
 }
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using Common.Models;
 using Common.Services;
 using Microsoft.AspNetCore.Hosting;
@@ -91,11 +92,25 @@ namespace Website.Controllers
                 return BadRequest();
             }
 
-            string dirPath = Path.Combine(_webHostEnvironment.ContentRootPath, "UploadFiles");
+            string dirPath = Path.Combine(_webHostEnvironment.WebRootPath, "image");
 
             string filePath = Path.Combine(dirPath, file.FileName);
-            //process the form data
-		
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            var regexp = new Regex("id-(.*)-");
+
+            int.TryParse(regexp.Match(file.FileName)
+                .Groups[1].Value, out var id);
+
+
+            
+            var birthday = _birthdayService.Get(id);
+            birthday.PhotoUrl = "https://" + Request.Host + "/image/" + file.FileName;
+            _birthdayService.Update(birthday);
+
             return Ok("good");
         }
     }
