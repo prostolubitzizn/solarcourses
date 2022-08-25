@@ -16,6 +16,33 @@ function refresh() {
 }
 
 
+function addBirthday(){
+    var table = document.getElementById("myTableData");
+    var myName = document.getElementById("name");
+    var birthDate = document.getElementById("birthDate");
+    var photo = document.getElementById("photo");
+    
+    const data =  {
+        fullName: myName.value,
+        birthDateString: birthDate.value,
+        photoUrl: photo.value,
+    }
+    
+    console.log("stringified", JSON.stringify(data));
+    
+    $.ajax(
+        {
+            url: "https://localhost:5002/Birthday/insertBirthday",
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(data)
+        })
+        .then(data => {
+            refresh();
+        });
+   
+}
+
 function deleteBirthday(id){
     $.ajax(
         {

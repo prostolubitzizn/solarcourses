@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Common.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Common.Services
 {
@@ -16,6 +17,10 @@ namespace Common.Services
 
         public int? Create(Birthday birthday)
         {
+            if (!birthday.BirthDateString.IsNullOrEmpty())
+            {
+                birthday.BirthDate = DateTime.Parse(birthday.BirthDateString);
+            }
             return _birthdayRepository.Create(birthday);
         }
 
