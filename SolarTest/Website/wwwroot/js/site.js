@@ -8,7 +8,6 @@ refresh();
 function refresh() {
     deleteAllRows();
     $.get("https://localhost:5002/Birthday/allBirthdays", function (data) {
-        console.log('data', data);
         for (let i = 0; i < data.length; i++) {
             addRow(data[i].id, data[i].fullName, data[i].birthDateString, data[i].photoUrl);
         }
@@ -29,7 +28,7 @@ function addBirthday(){
         photoUrl: photo.value,
     }
     
-    if(id){
+    if(id.value){
         
         data.id = id.value;
         $.ajax(
@@ -68,6 +67,33 @@ function deleteBirthday(id){
         .then(data => {
             refresh();
         });
+}
+
+function getSoonBirthdays(){
+    deleteAllRows();
+    $.get("https://localhost:5002/Birthday/soonBirthday", function (data) {
+        for (let i = 0; i < data.length; i++) {
+            addRow(data[i].id, data[i].fullName, data[i].birthDateString, data[i].photoUrl);
+        }
+    });
+}
+
+function getTodayBirthdays(){
+    deleteAllRows();
+    $.get("https://localhost:5002/Birthday/todayBirthday", function (data) {
+        for (let i = 0; i < data.length; i++) {
+            addRow(data[i].id, data[i].fullName, data[i].birthDateString, data[i].photoUrl);
+        }
+    });
+}
+
+function getOutDatedBirthdays(){
+    deleteAllRows();
+    $.get("https://localhost:5002/Birthday/outdatedBirthday", function (data) {
+        for (let i = 0; i < data.length; i++) {
+            addRow(data[i].id, data[i].fullName, data[i].birthDateString, data[i].photoUrl);
+        }
+    });
 }
 
 function deleteAllRows(){
