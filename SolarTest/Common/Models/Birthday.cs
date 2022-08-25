@@ -7,6 +7,7 @@ namespace Common.Models
         public int Id { get; set; }
         public string FullName { get; set; }
         public DateTime BirthDate { get; set; }
+        public string BirthDateString { get; set; }
         public string PhotoUrl { get; set; }
         public int Order { get; set; }
         

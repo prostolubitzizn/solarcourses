@@ -26,12 +26,22 @@ namespace Common.Services
 
         public Birthday Get(int id)
         {
-            return _birthdayRepository.Get(id);
+            var bd = _birthdayRepository.Get(id);
+
+            bd.BirthDateString = bd.BirthDate.ToString("MM/dd/yyyy");
+            return bd;
         }
 
         public List<Birthday> GetBirthdays()
         {
-            return _birthdayRepository.GetBirthdays().OrderByDescending(x => x.BirthDate).ToList();
+            var bds = _birthdayRepository.GetBirthdays().OrderByDescending(x => x.BirthDate).ToList();
+
+            foreach (var bd  in bds)
+            {
+                bd.BirthDateString = bd.BirthDate.ToString("MM/dd/yyyy");
+            }
+          
+            return bds;
         }
 
         public void Update(Birthday birthday)
