@@ -20,7 +20,7 @@ namespace NotificationWorker
         private static TelegramBotClient _botClient;
         private static IChatService _chatService;
         private static IBirthdayService _birthdayService;
-        private static int timeOutInMs = 3000;
+        private static int timeOutInMs = 60000;
         private static string botToken = "5799312299:AAHsTeAwI7OS_8nNvv-osgstqQJjik7WPxA";
         static async Task Main(string[] args)
         {
@@ -94,6 +94,7 @@ namespace NotificationWorker
 
                 foreach (var chat in chats)
                 {
+                    await Notify(botClient, token, chat.ChatId, "----------------NEW UPDATES---------------");
                     await Notify(botClient, token, chat.ChatId, birthdaySoonMessage);
                     await Notify(botClient, token, chat.ChatId, todayBirthdayMessage);
                 }
