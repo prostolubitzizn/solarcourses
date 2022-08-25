@@ -18,6 +18,7 @@ function refresh() {
 
 function addBirthday(){
     var table = document.getElementById("myTableData");
+    var id = document.getElementById("id");
     var myName = document.getElementById("name");
     var birthDate = document.getElementById("birthDate");
     var photo = document.getElementById("photo");
@@ -28,18 +29,33 @@ function addBirthday(){
         photoUrl: photo.value,
     }
     
-    console.log("stringified", JSON.stringify(data));
+    if(id){
+        
+        data.id = id.value;
+        $.ajax(
+            {
+                url: "https://localhost:5002/Birthday/updateBirthday",
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data)
+            })
+            .then(data => {
+                refresh();
+            });
+    }
+    else{
+        $.ajax(
+            {
+                url: "https://localhost:5002/Birthday/insertBirthday",
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data)
+            })
+            .then(data => {
+                refresh();
+            });
+    }
     
-    $.ajax(
-        {
-            url: "https://localhost:5002/Birthday/insertBirthday",
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(data)
-        })
-        .then(data => {
-            refresh();
-        });
    
 }
 

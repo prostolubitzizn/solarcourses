@@ -51,6 +51,10 @@ namespace Common.Services
 
         public void Update(Birthday birthday)
         {
+            if (!birthday.BirthDateString.IsNullOrEmpty())
+            {
+                birthday.BirthDate = DateTime.Parse(birthday.BirthDateString);
+            }
             _birthdayRepository.Update(birthday);
         }
 
